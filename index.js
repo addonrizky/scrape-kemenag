@@ -83,6 +83,8 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     );
     console.log("wait until page loaded")
 
+    await page.waitForNavigation();
+
     await sleep(1000)
     await page.evaluate(() => {
         document.scrollingElement.scrollTop = 800
