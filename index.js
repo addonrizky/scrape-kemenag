@@ -71,6 +71,7 @@ function sleep(ms) {
 }
 
 async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter, lembagaIter){
+    console.log("WHERE WE AT ? ", provinceIter+".", regencyIter+".", districtIter+".", lembagaIter)
     await page.goto(
         url,
         {
@@ -158,8 +159,6 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     console.log("capture the page")
 
     lembagaModel.saveLembaga(valueLembaga, valuePimpinan, valueKontak);
-
-    console.log("WHERE WE AT ? ", provinceIter+".", regencyIter+".", districtIter+".", lembagaIter)
 
     if(provinceBtn.length - 1 == provinceIter){
         return "DONE";
