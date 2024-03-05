@@ -125,6 +125,9 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     const lembagaBtn = await page.$$('table#TBLDATA tbody td a');
     console.log("banyaknya lembaga : ", lembagaBtn.length)
 
+    if(districtBtn.length - 1 == districtIter && lembagaBtn.length == 0){
+        return "INCR_REGENCY"
+    }
     if(lembagaBtn.length == 0){
         return "INCR_DISTRICT"
     }
