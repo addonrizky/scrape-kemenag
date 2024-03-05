@@ -40,10 +40,13 @@ const lembagaModel = require('./model/lembaga');
                 case "INCR_PROVINCE":
                     provinceIter++
                     regencyIter=0
+                    districtIter=0
+                    lembagaIter=0
                     break
                 case "INCR_REGENCY":
                     regencyIter++
                     districtIter=0
+                    lembagaIter=0
                     break
                 case "INCR_DISTRICT":
                     districtIter++
