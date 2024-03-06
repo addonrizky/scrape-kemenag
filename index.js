@@ -125,6 +125,10 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     const lembagaBtn = await page.$$('table#TBLDATA tbody td a');
     console.log("banyaknya lembaga : ", lembagaBtn.length)
 
+    await sleep(1000)
+    await page.screenshot({ path: 'image/screenshot.png' });
+    console.log("capture the page")
+
     if(districtBtn.length - 1 == districtIter && lembagaBtn.length == 0){
         return "INCR_REGENCY"
     }
@@ -135,7 +139,7 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     await lembagaBtn[lembagaIter].click()
 
     // get nama pimpinan
-    await sleep(5000)
+    await sleep(7000)
     const labelLembagaRaw = await page.waitForSelector('th >>>> ::-p-text("Nama Lembaga")');
     const valueLembagaRaw = await page.evaluateHandle(el => el.nextElementSibling, labelLembagaRaw);
     const valueLembaga = await (await valueLembagaRaw.getProperty('innerHTML')).jsonValue();
