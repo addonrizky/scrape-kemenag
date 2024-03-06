@@ -26,10 +26,10 @@ const lembagaModel = require('./model/lembaga');
     const page = pages[0]
 
     let stillRun = true
-    let provinceIter = 0
-    let regencyIter = 4
-    let districtIter = 5
-    let lembagaIter = 8
+    let provinceIter = 8
+    let regencyIter = 0
+    let districtIter = 6
+    let lembagaIter = 0
     let iterSignal = "NO_SIGNAL"
     let iterSoFar = 0
     while(stillRun){
@@ -92,6 +92,12 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     // click province
     const provinceBtn = await page.$$('table#TBLDATA tbody td a');
     await provinceBtn[provinceIter].click()
+
+    await sleep(3000)
+    await page.evaluate(() => {
+        document.scrollingElement.scrollTop = 800
+    })
+    console.log("scroll down")
 
     // click regency
     await sleep(1000)
