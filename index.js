@@ -145,7 +145,7 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     await lembagaBtn[lembagaIter].click()
 
     // get nama pimpinan
-    await sleep(7000)
+    await sleep(5000)
     const labelLembagaRaw = await page.waitForSelector('th >>>> ::-p-text("Nama Lembaga")');
     const valueLembagaRaw = await page.evaluateHandle(el => el.nextElementSibling, labelLembagaRaw);
     const valueLembaga = await (await valueLembagaRaw.getProperty('innerHTML')).jsonValue();
