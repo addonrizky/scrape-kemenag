@@ -116,6 +116,9 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     console.log("wait until page loaded")
 
     await sleep(1000)
+    await page.select('select[name="TBLDATA_length"]', '100')
+
+    await sleep(1000)
     await page.evaluate(() => {
         document.scrollingElement.scrollTop = 800
     })
@@ -123,9 +126,14 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
 
     // click province
     const provinceBtn = await page.$$('table#TBLDATA tbody td a');
+    const provinceValue = await (await provinceBtn[provinceIter].getProperty('innerHTML')).jsonValue();
+    console.log("province val: ", provinceValue)
     await provinceBtn[provinceIter].click()
 
-    await sleep(3000)
+    await sleep(2000)
+    await page.select('select[name="TBLDATA_length"]', '100')
+
+    await sleep(1000)
     await page.evaluate(() => {
         document.scrollingElement.scrollTop = 800
     })
@@ -134,7 +142,12 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     // click regency
     await sleep(1000)
     const regencyBtn = await page.$$('table#TBLDATA tbody td a');
+    const regencyValue = await (await regencyBtn[regencyIter].getProperty('innerHTML')).jsonValue();
+    console.log("regency val: ", regencyValue)
     await regencyBtn[regencyIter].click()
+
+    await sleep(2000)
+    await page.select('select[name="TBLDATA_length"]', '100')
 
     await sleep(1000)
     await page.evaluate(() => {
@@ -145,12 +158,17 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     // click district
     await sleep(1000)
     const districtBtn = await page.$$('table#TBLDATA tbody td a');
+    const districtValue = await (await districtBtn[districtIter].getProperty('innerHTML')).jsonValue();
+    console.log("district val: ", districtValue)
 
     if(districtBtn.length == 0){
         return "INCR_REGENCY"
     }
 
     await districtBtn[districtIter].click()
+
+    await sleep(2000)
+    await page.select('select[name="TBLDATA_length"]', '100')
 
     await sleep(1000)
     await page.evaluate(() => {
@@ -161,6 +179,8 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     // click lembaga
     await sleep(1000)
     const lembagaBtn = await page.$$('table#TBLDATA tbody td a');
+    const lembagaValue = await (await lembagaBtn[lembagaIter].getProperty('innerHTML')).jsonValue();
+    console.log("lembaga val: ", lembagaValue)
     console.log("banyaknya lembaga : ", lembagaBtn.length)
 
     await sleep(1000)
@@ -206,7 +226,8 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     await page.screenshot({ path: 'image/screenshot.png' });
     console.log("capture the page")
 
-    await lembagaModel.saveLembaga(valueLembaga, valuePimpinan, valueKontak);
+    //console.log(provinceValue, regencyValue, districtValue, lembagaValue)
+    await lembagaModel.saveLembaga(valueLembaga, valuePimpinan, valueKontak, provinceValue, regencyValue, districtValue);
     await counterModel.updateCheckpoint(provinceIter+"."+regencyIter+"."+districtIter+"."+lembagaIter)
 
     if(provinceBtn.length - 1 == provinceIter){
