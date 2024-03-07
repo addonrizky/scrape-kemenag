@@ -3,11 +3,18 @@ services:
     crawler:
         build : .
         ports: 
-            - "3003:3003"
+            - "3099:3099"
         volumes:
             - .:/app/
             - ./node_modules/:/app/node_modules
             - ./image/:/app/image
+        healthcheck: 
+            test: curl --fail http://localhost:3099 || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 10s
+        restart: unless-stopped
         command: 
             - /bin/sh
             - -c
@@ -15,9 +22,18 @@ services:
                 npm install cheerio --save
                 npm install axios --save
                 npm install mysql --save
+                npm install express --save
+                npm install cors --save
                 nodemon index.js
         environment:
             HOST_DB: host.docker.internal
             USER_DB: user
             PASS_DB: test
             SCHEMA_DB: pesantren
+    autoheal:
+        restart: always
+        image: willfarrell/autoheal
+        environment:
+        - AUTOHEAL_CONTAINER_LABEL=all
+        volumes:
+        - /var/run/docker.sock:/var/run/docker.sock

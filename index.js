@@ -1,7 +1,32 @@
 const puppeteer = require('puppeteer');
 const db = require('./config/database');
 const lembagaModel = require('./model/lembaga');
+const counterModel = require('./model/counter');
+const express = require('express')
+const cors = require('cors');
 
+const app = express()
+const port = 3099
+
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+//app.use(cors(corsOptions));
+app.use(express.json())
+
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
+
+app.get('/errorcreate', (req, res) => {
+    process.exit(1)
+})
+
+app.listen(port, async function () {
+    console.log('Express server lisening on port ' + port);
+});
 
 (async () => {
     // Creating MySQL connection
@@ -25,11 +50,15 @@ const lembagaModel = require('./model/lembaga');
 
     const page = pages[0]
 
+    // get last counter
+    const checkpoint = await counterModel.getCheckpoint()
+    const checkpointArea = await checkpoint.split(".")
+
     let stillRun = true
-    let provinceIter = 8
-    let regencyIter = 0
-    let districtIter = 6
-    let lembagaIter = 0
+    let provinceIter = checkpointArea[0]
+    let regencyIter = checkpointArea[1]
+    let districtIter = checkpointArea[2]
+    let lembagaIter = checkpointArea[3]
     let iterSignal = "NO_SIGNAL"
     let iterSoFar = 0
     while(stillRun){
@@ -60,6 +89,9 @@ const lembagaModel = require('./model/lembaga');
             }  
         } catch(e){
             console.log("error ges ", e)
+            if(e.toString().includes("Protocol")){
+                process.exit(1)
+            }
         }
         iterSoFar++
         console.log("iteration so far : ", iterSoFar)
@@ -175,6 +207,7 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     console.log("capture the page")
 
     await lembagaModel.saveLembaga(valueLembaga, valuePimpinan, valueKontak);
+    await counterModel.updateCheckpoint(provinceIter+"."+regencyIter+"."+districtIter+"."+lembagaIter)
 
     if(provinceBtn.length - 1 == provinceIter){
         return "DONE";
