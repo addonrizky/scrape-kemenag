@@ -183,6 +183,10 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     if(districtBtn.length - 1 == districtIter && lembagaBtn.length == 0){
         return "INCR_REGENCY"
     }
+    
+    if(lembagaBtn.length == 0){
+        return "INCR_DISTRICT"
+    }
 
     const lembagaValue = await (await lembagaBtn[lembagaIter].getProperty('innerHTML')).jsonValue();
     console.log("lembaga val: ", lembagaValue)
@@ -191,10 +195,6 @@ async function scrapeLembaga(page, url, provinceIter, regencyIter, districtIter,
     await sleep(1000)
     await page.screenshot({ path: 'image/screenshot.png' });
     console.log("capture the page")
-
-    if(lembagaBtn.length == 0){
-        return "INCR_DISTRICT"
-    }
 
     await lembagaBtn[lembagaIter].click()
 
